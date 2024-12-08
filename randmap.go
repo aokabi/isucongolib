@@ -52,3 +52,7 @@ func (m *randMap) Set(key, value string) {
 	}
 	m.m[key] = value
 }
+
+func (m *randMap) Len() {
+	// TODO: implement
+}
