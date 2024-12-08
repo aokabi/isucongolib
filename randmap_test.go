@@ -193,3 +193,72 @@ func Test_randMap_Set(t *testing.T) {
 		})
 	}
 }
+
+func Test_randMap_Pop(t *testing.T) {
+	type fields struct {
+		m map[string]string
+		s []string
+	}
+	type args struct {
+		key string
+	}
+	type expected struct {
+		value string
+		ok    bool
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   expected
+	}{
+		{
+			name: "ok",
+			fields: fields{
+				m: map[string]string{
+					"a": "A",
+					"b": "B",
+					"c": "C",
+				},
+				s: []string{"a", "b", "c"},
+			},
+			args: args{
+				key: "a",
+			},
+			want: expected{
+				value: "A",
+				ok:    true,
+			},
+		},
+		{
+			name: "empty",
+			fields: fields{
+				m: map[string]string{},
+				s: []string{},
+			},
+			args: args{
+				key: "a",
+			},
+			want: expected{
+				value: "",
+				ok:    false,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			rnd := rand.New(rand.NewSource(0))
+			m := &randMap[string, string]{
+				m:        tt.fields.m,
+				keys:     tt.fields.s,
+				randFunc: rnd.Intn,
+			}
+			if gotValue, gotOk := m.Pop(tt.args.key); gotValue != tt.want.value || gotOk != tt.want.ok {
+				t.Errorf("Pop() = (%v, %v), want (%v, %v)", gotValue, gotOk, tt.want.value, tt.want.ok)
+			}
+			if _, ok := m.m[tt.args.key]; ok {
+				t.Errorf("Pop() = (%v, %v), not remove value", tt.args.key, tt.want.value)
+			}
+		})
+	}
+}

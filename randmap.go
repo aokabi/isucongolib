@@ -68,6 +68,23 @@ func (m *randMap[K, V]) Get(key K) (value V, ok bool) {
 	// return
 }
 
+func (m *randMap[K, V]) Pop(key K) (value V, ok bool) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	if _, ok := m.m[key]; !ok {
+		return zero[V](), false
+	}
+	value = m.m[key]
+	delete(m.m, key)
+	for i, k := range m.keys {
+		if k == key {
+			m.keys = append(m.keys[:i], m.keys[i+1:]...)
+			break
+		}
+	}
+	return value, true
+}
+
 // TODO: implement
 func (m *randMap[K, V]) Len() int {
 	return 0
