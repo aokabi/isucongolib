@@ -4,36 +4,42 @@ import (
 	"sync"
 )
 
-type randMap struct {
+// thread-safe
+type randMap[K comparable, V any] struct {
 	mu       sync.Mutex
-	m        map[string]string
-	keys     []string // slice of keys
+	m        map[K]V
+	keys     []K // slice of keys
 	randFunc func(int) int
 }
 
-func NewRandMap(f func(int) int) *randMap {
-	return &randMap{
-		m:        make(map[string]string),
-		keys:     make([]string, 0),
+func zero[T any]() T {
+	var zero T
+	return zero
+}
+
+func NewRandMap[K comparable, V any](f func(int) int) *randMap[K, V] {
+	return &randMap[K, V]{
+		m:        make(map[K]V),
+		keys:     make([]K, 0),
 		randFunc: f,
 	}
 }
 
-func (m *randMap) Random() (key, value string, ok bool) {
+func (m *randMap[K, V]) Random() (key K, value V, ok bool) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	if len(m.keys) == 0 {
-		return "", "", false
+		return zero[K](), zero[V](), false
 	}
 	key = m.keys[m.randFunc(len(m.keys))]
 	return key, m.m[key], true
 }
 
-func (m *randMap) PopRandom() (key, value string, ok bool) {
+func (m *randMap[K, V]) PopRandom() (key K, value V, ok bool) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	if len(m.keys) == 0 {
-		return "", "", false
+		return zero[K](), zero[V](), false
 	}
 	i := m.randFunc(len(m.keys))
 	key = m.keys[i]
@@ -44,7 +50,7 @@ func (m *randMap) PopRandom() (key, value string, ok bool) {
 }
 
 // 既に存在するキーに対しては上書き
-func (m *randMap) Set(key, value string) {
+func (m *randMap[K, V]) Set(key K, value V) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	if _, ok := m.m[key]; !ok {
@@ -53,6 +59,16 @@ func (m *randMap) Set(key, value string) {
 	m.m[key] = value
 }
 
-func (m *randMap) Len() {
-	// TODO: implement
+// TODO: implement
+func (m *randMap[K, V]) Get(key K) (value V, ok bool) {
+	return zero[V](), false
+	// m.mu.Lock()
+	// defer m.mu.Unlock()
+	// value, ok = m.m[key]
+	// return
+}
+
+// TODO: implement
+func (m *randMap[K, V]) Len() int {
+	return 0
 }

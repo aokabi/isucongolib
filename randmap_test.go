@@ -54,7 +54,7 @@ func TestRandMap_Random(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			// fixed seed
 			rnd := rand.New(rand.NewSource(0))
-			m := &randMap{
+			m := &randMap[string, string]{
 				mu:       sync.Mutex{},
 				m:        tt.fields.m,
 				keys:     tt.fields.s,
@@ -115,7 +115,7 @@ func Test_randMap_RandomPop(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			rnd := rand.New(rand.NewSource(0))
-			m := &randMap{
+			m := &randMap[string, string]{
 				mu:       sync.Mutex{},
 				m:        tt.fields.m,
 				keys:     tt.fields.s,
@@ -178,7 +178,7 @@ func Test_randMap_Set(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			rnd := rand.New(rand.NewSource(0))
-			m := &randMap{
+			m := &randMap[string, string]{
 				m:        tt.fields.m,
 				keys:     tt.fields.s,
 				randFunc: rnd.Intn,
