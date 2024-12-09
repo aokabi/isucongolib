@@ -262,3 +262,48 @@ func Test_randMap_Pop(t *testing.T) {
 		})
 	}
 }
+
+func Test_randMap_Len(t *testing.T){
+	type fields struct {
+		m map[string]string
+		s []string
+	}
+	tests := []struct {
+		name string
+		fields fields
+		want int
+	}{
+		{
+			name: "ok",
+			fields: fields{
+				m: map[string]string{
+					"a": "A",
+					"b": "B",
+					"c": "C",
+				},
+				s: []string{"a", "b", "c"},
+			},
+			want: 3,
+		},
+		{
+			name: "empty",
+			fields: fields{
+				m: map[string]string{},
+				s: []string{},
+			},
+			want: 0,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			m := &randMap[string, string]{
+				m:        tt.fields.m,
+				keys:     tt.fields.s,
+				randFunc: nil,
+			}
+			if got := m.Len(); got != tt.want {
+				t.Errorf("Len() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

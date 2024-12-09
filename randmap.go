@@ -85,7 +85,8 @@ func (m *randMap[K, V]) Pop(key K) (value V, ok bool) {
 	return value, true
 }
 
-// TODO: implement
 func (m *randMap[K, V]) Len() int {
-	return 0
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	return len(m.keys)
 }
