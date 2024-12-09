@@ -12,11 +12,6 @@ type randMap[K comparable, V any] struct {
 	randFunc func(int) int
 }
 
-func zero[T any]() T {
-	var zero T
-	return zero
-}
-
 func NewRandMap[K comparable, V any](f func(int) int) *randMap[K, V] {
 	return &randMap[K, V]{
 		m:        make(map[K]V),
@@ -29,7 +24,7 @@ func (m *randMap[K, V]) Random() (key K, value V, ok bool) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	if len(m.keys) == 0 {
-		return zero[K](), zero[V](), false
+		return Zero[K](), Zero[V](), false
 	}
 	key = m.keys[m.randFunc(len(m.keys))]
 	return key, m.m[key], true
@@ -39,7 +34,7 @@ func (m *randMap[K, V]) PopRandom() (key K, value V, ok bool) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	if len(m.keys) == 0 {
-		return zero[K](), zero[V](), false
+		return Zero[K](), Zero[V](), false
 	}
 	i := m.randFunc(len(m.keys))
 	key = m.keys[i]
@@ -70,7 +65,7 @@ func (m *randMap[K, V]) Pop(key K) (value V, ok bool) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	if _, ok := m.m[key]; !ok {
-		return zero[V](), false
+		return Zero[V](), false
 	}
 	value = m.m[key]
 	delete(m.m, key)
