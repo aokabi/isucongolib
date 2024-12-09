@@ -59,13 +59,11 @@ func (m *randMap[K, V]) Set(key K, value V) {
 	m.m[key] = value
 }
 
-// TODO: implement
 func (m *randMap[K, V]) Get(key K) (value V, ok bool) {
-	return zero[V](), false
-	// m.mu.Lock()
-	// defer m.mu.Unlock()
-	// value, ok = m.m[key]
-	// return
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	value, ok = m.m[key]
+	return
 }
 
 func (m *randMap[K, V]) Pop(key K) (value V, ok bool) {
